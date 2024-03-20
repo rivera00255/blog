@@ -1,10 +1,9 @@
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import './reset.css';
+import { cssBundleHref } from '@remix-run/css-bundle';
+import Header from 'component/Header';
+
+export const links = () => [...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : [])];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,6 +15,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Header />
         {children}
         <ScrollRestoration />
         <Scripts />
