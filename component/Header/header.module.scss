@@ -4,16 +4,16 @@
   margin: 0 auto;
   padding: 10px 16px;
   position: relative;
-}
-.header > h1 {
-  color: #374151;
+  > h1 {
+    color: #374151;
+  }
 }
 .menu {
   position: absolute;
   top: 20px;
   right: 16px;
-}
-.menu > button {
-  font-size: 14px;
-  color: #6b7280;
+  > button {
+    font-size: 14px;
+    color: #6b7280;
+  }
 }

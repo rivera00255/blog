@@ -1,2 +1,15 @@
 .editor {
+  margin: 10px;
+}
+.buttonWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0 10px 0;
+  > button {
+    padding: 4px 24px;
+    border: 1px solid #6b7280;
+    border-radius: 5px;
+    color: #6b7280;
+  }
 }
