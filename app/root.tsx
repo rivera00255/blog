@@ -1,11 +1,12 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 import './reset.css';
 import { cssBundleHref } from '@remix-run/css-bundle';
-import Header from 'component/Header';
 import { useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from 'lib/firebase';
 import { MetaFunction } from '@remix-run/node';
+import Header from './component/Header';
+import { auth } from './lib/firebase';
+import QueryProvider from './lib/QueryProvider';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Blog' }, { name: 'Blog', content: 'personal commentary' }];
@@ -23,7 +24,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Header />
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -41,5 +41,10 @@ export default function App() {
     });
   }, []);
 
-  return <Outlet context={user} />;
+  return (
+    <QueryProvider>
+      <Header user={user} />
+      <Outlet context={user} />
+    </QueryProvider>
+  );
 }

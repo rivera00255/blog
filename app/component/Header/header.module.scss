@@ -6,13 +6,21 @@
   position: relative;
   > h1 {
     color: #374151;
+    // width: fit-content;
   }
 }
-.menu {
+.nav {
   position: absolute;
   top: 20px;
   right: 16px;
-  > button {
+  > ul {
+    display: flex;
+    align-items: center;
+    > li:last-of-type {
+      margin-left: 8px;
+    }
+  }
+  button {
     font-size: 14px;
     color: #6b7280;
   }
