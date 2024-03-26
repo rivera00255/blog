@@ -3,11 +3,17 @@
   max-width: 640px;
   margin: 0 auto;
   padding: 48px 32px;
+  @media (max-width: 768px) {
+    padding: 48px 10px;
+  }
 }
 .backButton {
   margin: 0 0 10px 5rem;
   font-size: 13px;
   color: #9ca3af;
+  @media (max-width: 768px) {
+    margin: 0 0 10px 10px;
+  }
 }
 .form {
   width: 420px;
@@ -20,6 +26,9 @@
   align-items: center;
   font-size: 14px;
   color: #374151;
+  @media (max-width: 768px) {
+    width: 96%;
+  }
   > h4 {
     font-weight: 300;
     margin-bottom: 20px;
@@ -31,6 +40,9 @@
     &:last-of-type {
       margin-top: 16px;
     }
+    @media (max-width: 768px) {
+      width: 90%;
+    }
   }
   > input {
     width: 320px;
@@ -41,6 +53,9 @@
     &::placeholder {
       font-size: 13px;
       color: #d1d5db;
+    }
+    @media (max-width: 768px) {
+      width: 90%;
     }
   }
   > button {

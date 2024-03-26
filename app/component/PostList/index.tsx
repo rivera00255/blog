@@ -2,17 +2,40 @@ import { useQuery } from '@tanstack/react-query';
 import PostPreview from '../PostPreview';
 import styles from './list.module.scss';
 import { getPost } from '~/service';
+import { useState } from 'react';
+import { Posts } from '~/type';
+import { Link } from '@remix-run/react';
+import Pagiantion from '../Pagination';
 
 const PostList = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPageBlock, setCurrentPageBlock] = useState(0);
+  const pageBlockLimit = 2;
+
   const { data } = useQuery({
-    queryKey: ['posts'],
-    queryFn: () => getPost(),
+    queryKey: ['posts', currentPage],
+    queryFn: () => getPost({ page: currentPage }),
   });
-  console.log(data);
 
   return (
-    <div className={styles.list}>
-      <PostPreview />
+    <div>
+      <div className={styles.list}>
+        {data?.posts.map((item) => (
+          <Link to={`/post/${item.id}`} key={item.id}>
+            <PostPreview item={item as Posts} />
+          </Link>
+        ))}
+      </div>
+      {data && (
+        <Pagiantion
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          currentPageBlock={currentPageBlock}
+          setCurrentPageBlock={setCurrentPageBlock}
+          totalPage={data?.totalPages}
+          pageBlockLimit={pageBlockLimit}
+        />
+      )}
     </div>
   );
 };

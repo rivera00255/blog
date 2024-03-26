@@ -1,0 +1,18 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  button {
+    // padding: 0 2px;
+    margin: 0 8px;
+  }
+  button:disabled {
+    display: none;
+  }
+  button[data-index] {
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}

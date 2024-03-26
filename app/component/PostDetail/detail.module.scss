@@ -1,0 +1,27 @@
+.post {
+  min-height: 70dvh;
+  > hr {
+    border: 0;
+    border-bottom: 1px solid #d1d5db;
+    margin: 10px 0;
+  }
+}
+.title {
+  padding: 8px;
+}
+.content {
+  padding: 20px;
+}
+.buttonWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  button {
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    padding: 8px 10px;
+    &:hover {
+      border: 1px solid #9ca3af;
+    }
+  }
+}
