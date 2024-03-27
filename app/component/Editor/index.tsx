@@ -5,9 +5,8 @@ import SunEditorCore from 'suneditor/src/lib/core';
 import styles from './editor.module.scss';
 import { UploadInfo } from 'suneditor-react/dist/types/upload';
 import { UploadBeforeHandler } from 'suneditor-react/dist/types/upload';
-import { MutationFunction, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { addPost, deletePost, getPostById, updatePost } from '~/service';
-import { Posts } from '~/type';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { addPost, deleteImage, deletePost, getPostById, saveImage, updatePost } from '~/service';
 import { useNavigate } from '@remix-run/react';
 
 const SunEditor = lazy(() => import('suneditor-react'));
@@ -18,6 +17,8 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
   const editor = useRef<SunEditorCore>();
   const date = new Date();
   const postId = String(id);
+  const [images, setImages] = useState<string[]>([]);
+  // console.log(images);
 
   const navigate = useNavigate();
 
@@ -58,8 +59,14 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
     editor.current = sunEditor;
   };
 
+  const deletePostImage = (userId: string) => {
+    if (editor.current) {
+      const images = editor.current.getImagesInfo();
+      images.forEach((item) => deleteImage({ image: item, userId }));
+    }
+  };
+
   const onSubmit = (mode: 'create' | 'update') => {
-    // console.log(editor.current?.getContents(true));
     if (titleRef.current && editor.current) {
       const title = titleRef.current.value;
       const text = editor.current.getText().trim();
@@ -67,7 +74,6 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
       if (title.length > 0 && text.length > 0) {
         mode === 'create' && create({ title, content, createdAt: date, user });
         mode === 'update' && update({ userId: user.uid, post: { title, content, id: String(id) } });
-        // mode === 'update' && console.log({ title, content, id });
       } else {
         alert('제목과 내용을 입력하세요.');
       }
@@ -79,8 +85,19 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
   // };
 
   const onImageUploadBefore = (files: Array<File>, info: object, uploadHandler: UploadBeforeHandler) => {
-    console.log(files);
-    return true;
+    (async () => {
+      const time = new Date().getTime();
+      const filename = `${files[0].name}${time}`;
+      const url = await saveImage({ image: { file: files[0], name: filename }, userId: user.uid });
+      if (url) {
+        const response = { url: url, name: filename, size: files[0].size };
+        uploadHandler({
+          result: [response],
+        });
+      }
+    })();
+
+    return undefined;
   };
 
   const handleImageUpload = (
@@ -92,6 +109,18 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
   ) => {
     console.log(targetImgElement);
   };
+
+  const imageUploadHandler = (
+    xmlHttpRequest: XMLHttpRequest,
+    info: {
+      isUpdate: boolean;
+      linkValue: any;
+      element: Element;
+      align: any;
+      linkNewWindow: any;
+      [key: string]: any;
+    }
+  ) => {};
 
   return (
     <div className={styles.editorWrapper}>
@@ -167,7 +196,10 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
                     <button
                       style={{ marginLeft: '10px' }}
                       onClick={() => {
-                        if (data && typeof data.id === 'string') delPost({ id: data.id, userId: user.uid });
+                        if (data && typeof data.id === 'string') {
+                          deletePostImage(user.uid);
+                          delPost({ id: data.id, userId: user.uid });
+                        }
                       }}>
                       <span>
                         <svg

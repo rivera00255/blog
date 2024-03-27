@@ -13,7 +13,9 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { db } from '~/lib/firebase';
+import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { fileInfo } from 'suneditor/src/lib/core';
+import { db, storage } from '~/lib/firebase';
 import { Posts } from '~/type';
 
 const addPost = async (post: Posts) => {
@@ -100,7 +102,7 @@ const deletePost = async ({ id, userId }: { id: string; userId: string }) => {
 };
 
 const getPostByuserId = async (userId: string) => {
-  let list: { [key: string]: any }[] = [];
+  let list: Partial<Posts>[] = [];
   const postRef = collection(db, 'post');
   const q = query(postRef, where('user.uid', '==', userId), orderBy('createdAt', 'desc'));
   const querySnapshot = await getDocs(q);
@@ -110,4 +112,21 @@ const getPostByuserId = async (userId: string) => {
   return list;
 };
 
-export { addPost, getPost, getPostById, updatePost, deletePost };
+const saveImage = async ({ image, userId }: { image: { file: File; name: string }; userId: string }) => {
+  const imageRef = ref(storage, `${userId}/${image.name}`);
+  const response = await uploadBytes(imageRef, image.file);
+  const url = await getDownloadURL(response.ref);
+  return url;
+};
+
+const deleteImage = async ({ image, userId }: { image: fileInfo; userId: string }) => {
+  try {
+    const desertRef = ref(storage, `${userId}/${image.name}`);
+    await deleteObject(desertRef);
+    console.log('delete complete.');
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export { addPost, getPost, getPostById, updatePost, deletePost, saveImage, deleteImage };
