@@ -3,12 +3,33 @@
   align-items: center;
   justify-content: center;
   margin: 20px 0;
-  button {
-    // padding: 0 2px;
+  color: #525252;
+  input {
+    width: 40px;
+    border: 1px solid #d1d5db;
+    text-align: center;
     margin: 0 8px;
+    &:focus {
+      outline: none;
+    }
+    &:read-only {
+      border: none;
+    }
+  }
+  button {
+    padding: 1px;
+    margin: 0 5px;
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
   }
   button:disabled {
-    display: none;
+    // display: none;
+    color: #d4d4d4;
+    &:hover {
+      text-decoration: none;
+    }
   }
   button[data-index] {
     font-weight: 500;

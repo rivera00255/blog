@@ -1,4 +1,4 @@
-import { Suspense, lazy, useRef, useState } from 'react';
+import { Suspense, lazy, useCallback, useRef, useState } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
 import 'suneditor/dist/css/suneditor.min.css';
 import SunEditorCore from 'suneditor/src/lib/core';
@@ -13,7 +13,7 @@ const SunEditor = lazy(() => import('suneditor-react'));
 
 const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: string }) => {
   // const [value, setValue] = useState('');
-  const titleRef = useRef<HTMLInputElement>(null);
+  const titleRef = useRef<HTMLTextAreaElement>(null);
   const editor = useRef<SunEditorCore>();
   const date = new Date();
   const postId = String(id);
@@ -54,6 +54,13 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
       navigate('/');
     },
   });
+
+  const handleResizeHeight = useCallback(() => {
+    if (titleRef.current) {
+      titleRef.current.style.height = '0px';
+      titleRef.current.style.height = titleRef.current.scrollHeight + 'px';
+    }
+  }, []);
 
   const getSunEditorInstance = (sunEditor: SunEditorCore) => {
     editor.current = sunEditor;
@@ -124,7 +131,7 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
 
   return (
     <div className={styles.editorWrapper}>
-      <input type="text" ref={titleRef} defaultValue={data?.title || ''} />
+      <textarea ref={titleRef} defaultValue={data?.title || ''} onInput={handleResizeHeight} maxLength={140} />
       <ClientOnly fallback={null}>
         {() => (
           <Suspense fallback={<div>Loading...</div>}>
@@ -196,9 +203,11 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
                     <button
                       style={{ marginLeft: '10px' }}
                       onClick={() => {
-                        if (data && typeof data.id === 'string') {
-                          deletePostImage(user.uid);
-                          delPost({ id: data.id, userId: user.uid });
+                        if (confirm('are you sure you want to delete it?')) {
+                          if (data && typeof data.id === 'string') {
+                            deletePostImage(user.uid);
+                            delPost({ id: data.id, userId: user.uid });
+                          }
                         }
                       }}>
                       <span>

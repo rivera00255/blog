@@ -1,17 +1,25 @@
 .editorWrapper {
   padding: 0 10px;
-  > input[type='text'] {
+  > textarea {
     width: 100%;
     border: 1px solid #d1d5db;
     padding: 5px;
+    resize: none;
+    height: 36px;
+    &:focus {
+      outline: none;
+    }
     &::placeholder {
       font-size: 13px;
       color: #9ca3af;
     }
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 .editor {
-  margin: 10px 0;
+  margin: 0 0 10px 0;
 }
 .buttonWrapper {
   display: flex;
