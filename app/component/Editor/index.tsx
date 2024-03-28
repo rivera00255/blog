@@ -8,6 +8,7 @@ import { UploadBeforeHandler } from 'suneditor-react/dist/types/upload';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { addPost, deleteImage, deletePost, getPostById, saveImage, updatePost } from '~/service';
 import { useNavigate } from '@remix-run/react';
+import { useNotifyStore } from '~/store/notify';
 
 const SunEditor = lazy(() => import('suneditor-react'));
 
@@ -17,10 +18,12 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
   const editor = useRef<SunEditorCore>();
   const date = new Date();
   const postId = String(id);
-  const [images, setImages] = useState<string[]>([]);
+  // const [images, setImages] = useState<string[]>([]);
   // console.log(images);
 
   const navigate = useNavigate();
+
+  const { show } = useNotifyStore();
 
   const queryClient = useQueryClient();
 
@@ -78,11 +81,11 @@ const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: strin
       const title = titleRef.current.value;
       const text = editor.current.getText().trim();
       const content = editor.current.getContents(true);
-      if (title.length > 0 && text.length > 0) {
+      if (title.length > 0 && (text.length > 0 || editor.current.getImagesInfo().length > 0)) {
         mode === 'create' && create({ title, content, createdAt: date, user });
         mode === 'update' && update({ userId: user.uid, post: { title, content, id: String(id) } });
       } else {
-        alert('제목과 내용을 입력하세요.');
+        show({ message: '제목과 내용을 입력하세요.' });
       }
     }
   };

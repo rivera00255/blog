@@ -9,9 +9,7 @@ import Pagiantion from '../Pagination';
 
 const PostList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  // const [currentPageBlock, setCurrentPageBlock] = useState(0);
   const [inputPageValue, setInputPageValue] = useState(currentPage.toString());
-  const pageBlockLimit = 2;
 
   const { data } = useQuery({
     queryKey: ['posts', currentPage],
@@ -31,10 +29,7 @@ const PostList = () => {
         <Pagiantion
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
-          // currentPageBlock={currentPageBlock}
-          // setCurrentPageBlock={setCurrentPageBlock}
           totalPage={data?.totalPages}
-          pageBlockLimit={pageBlockLimit}
           inputValue={inputPageValue}
           setInputValue={setInputPageValue}
         />

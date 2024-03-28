@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '~/lib/firebase';
 import { validateEmail, validatePassword } from '~/utilities';
+import { useNotifyStore } from '~/store/notify';
 
 export const links = () => [{ rel: 'stylesheet', href: styles }];
 
@@ -29,6 +30,8 @@ const Login = () => {
 
   const navigate = useNavigate();
 
+  const { show } = useNotifyStore();
+
   useEffect(() => {
     if (actionData && typeof actionData?.email === 'string') {
       const email = actionData.email;
@@ -37,9 +40,10 @@ const Login = () => {
         signInWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
             navigate('/');
+            show({ message: 'welcome!' });
             return userCredential.user;
           })
-          .catch((error) => alert(error.message));
+          .catch((error) => show({ message: error.message }));
       }
       if (mode === 'join') {
         createUserWithEmailAndPassword(auth, email, password)
@@ -47,7 +51,7 @@ const Login = () => {
             navigate('/');
             return userCredential.user;
           })
-          .catch((error) => alert(error.message));
+          .catch((error) => show({ message: error.message }));
       }
     }
   }, [actionData]);

@@ -4,32 +4,16 @@ import styles from './page.module.scss';
 const Pagiantion = ({
   currentPage,
   setCurrentPage,
-  // currentPageBlock,
-  // setCurrentPageBlock,
-  pageBlockLimit,
   totalPage,
   inputValue,
   setInputValue,
 }: {
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
-  // currentPageBlock: number;
-  // setCurrentPageBlock: Dispatch<SetStateAction<number>>;
-  pageBlockLimit: number;
   totalPage: number;
   inputValue: string;
   setInputValue: Dispatch<SetStateAction<string>>;
 }) => {
-  // const pageOffset = currentPageBlock * pageBlockLimit;
-
-  const createPageArray = (totalPage: number) => {
-    return Array(totalPage)
-      .fill(undefined)
-      .map((_, i) => i + 1);
-  };
-
-  // let pageable = createPageArray(totalPage).slice(pageOffset, pageOffset + pageBlockLimit);
-
   const verifyInput = (value: string) => {
     const isNumRegex = /^[0-9]*$/;
     if (isNumRegex.test(value)) {
@@ -41,40 +25,33 @@ const Pagiantion = ({
   };
 
   const onPageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const value = e.target.value.replace(/[^\d]+/g, '');
     setInputValue(value);
+    if (Number(value) < 1) return;
     const verifiedValue = verifyInput(value);
     setCurrentPage(verifiedValue);
   };
 
-  const prev = () => {
+  const prev = (currentPage: number) => {
     if (currentPage <= 1) return;
-    setCurrentPage((page) => page - 1);
-    setInputValue((prev) => (Number(prev) - 1).toString());
-    // if (currentPageBlock < 1 || currentPageBlock === 0) return;
-    // setCurrentPageBlock((prev) => prev - 1);
-    // setCurrentPage((currentPageBlock - 1) * pageBlockLimit + 1);
+    setCurrentPage(currentPage - 1);
+    setInputValue((Number(currentPage) - 1).toString());
   };
 
-  const next = () => {
+  const next = (currentPage: number, totalPage: number) => {
     if (currentPage >= totalPage) return;
-    setCurrentPage((page) => page + 1);
-    setInputValue((prev) => (Number(prev) + 1).toString());
-    // if ((currentPageBlock + 1) * pageBlockLimit >= totalPage) return;
-    // setCurrentPageBlock((prev) => prev + 1);
-    // setCurrentPage((currentPageBlock + 1) * pageBlockLimit + 1);
+    setCurrentPage(currentPage + 1);
+    setInputValue((Number(currentPage) + 1).toString());
   };
 
   const moveToFirst = () => {
     setCurrentPage(1);
     setInputValue('1');
-    // setCurrentPageBlock(0);
   };
 
   const moveToLast = () => {
     setCurrentPage(totalPage);
     setInputValue(totalPage.toString());
-    // setCurrentPageBlock(Math.ceil(totalPage / pageBlockLimit) - 1);
   };
 
   return (
@@ -82,19 +59,13 @@ const Pagiantion = ({
       <button onClick={moveToFirst} disabled={currentPage === 1}>
         &lt;&lt;
       </button>
-      <button onClick={() => prev()} disabled={currentPage === 1 || totalPage < 2}>
+      <button onClick={() => prev(currentPage)} disabled={currentPage === 1 || totalPage < 2}>
         &lt;
       </button>
       <input type="text" value={inputValue} onChange={onPageChange} />
       &#47;
       <input type="text" value={totalPage} readOnly />
-      {/* {pageable.length > 0 &&
-        pageable.map((i) => (
-          <button data-index={currentPage === i ? i : null} key={i} onClick={() => setCurrentPage(i)}>
-            {i}
-          </button>
-        ))} */}
-      <button onClick={() => next()} disabled={currentPage === totalPage || totalPage < 2}>
+      <button onClick={() => next(currentPage, totalPage)} disabled={currentPage === totalPage || totalPage < 2}>
         &gt;
       </button>
       <button onClick={moveToLast} disabled={currentPage === totalPage}>

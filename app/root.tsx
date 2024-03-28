@@ -7,6 +7,8 @@ import { MetaFunction } from '@remix-run/node';
 import Header from './component/Header';
 import { auth } from './lib/firebase';
 import QueryProvider from './lib/QueryProvider';
+import Notification from './component/Notification';
+import { useNotifyStore } from './store/notify';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Blog' }, { name: 'Blog', content: 'personal commentary' }];
@@ -34,6 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
+  const { notify } = useNotifyStore();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -43,6 +46,7 @@ export default function App() {
 
   return (
     <QueryProvider>
+      {notify.message && <Notification message={notify.message} />}
       <Header user={user} />
       <Outlet context={user} />
     </QueryProvider>

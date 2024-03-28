@@ -23,7 +23,8 @@
     "react-dom": "^18.2.0",
     "remix-utils": "^7.5.0",
     "suneditor": "^2.45.1",
-    "suneditor-react": "^3.6.1"
+    "suneditor-react": "^3.6.1",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.8.1",

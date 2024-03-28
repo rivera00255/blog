@@ -1,0 +1,19 @@
+.notify {
+  position: fixed;
+  bottom: 40px;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  background: #f1f5f9;
+  color: #4b5563;
+  border-radius: 5px;
+  padding: 12px 20px;
+  min-width: 200px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+  > button {
+    margin-left: 10px;
+  }
+}
