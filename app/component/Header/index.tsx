@@ -2,9 +2,11 @@ import { Link, useLocation } from '@remix-run/react';
 import styles from './header.module.scss';
 import { User, signOut } from 'firebase/auth';
 import { auth } from '~/lib/firebase';
+import { usePageMarkerState } from '~/store/pageMarker';
 
 const Header = ({ user }: { user: User | null }) => {
   const { pathname } = useLocation();
+  const { reset } = usePageMarkerState();
 
   return (
     <header className={styles.header}>
@@ -15,7 +17,7 @@ const Header = ({ user }: { user: User | null }) => {
         {!user && !pathname.includes('login') && (
           <ul>
             <li>
-              <Link to="/login">
+              <Link to="/login" onClick={() => reset()}>
                 <button>login</button>
               </Link>
             </li>
@@ -24,7 +26,7 @@ const Header = ({ user }: { user: User | null }) => {
         {user && (
           <ul>
             <li>
-              <Link to="/edit">
+              <Link to="/edit" onClick={() => reset()}>
                 <button>edit</button>
               </Link>
             </li>

@@ -1,5 +1,7 @@
-import { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useEffect } from 'react';
 import styles from './page.module.scss';
+import { getSessionStorage, setSessionStorage } from '~/utilities/persist';
+import { usePageMarkerState } from '~/store/pageMarker';
 
 const Pagiantion = ({
   currentPage,
@@ -24,48 +26,65 @@ const Pagiantion = ({
     return currentPage;
   };
 
+  // console.log(performance.getEntriesByType('navigation')[0]);
+
+  // const savePage = (currentPage: number) => {
+  //   setSessionStorage('page', currentPage);
+  // };
+
+  const { save } = usePageMarkerState();
+
   const onPageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^\d]+/g, '');
     setInputValue(value);
     if (Number(value) < 1) return;
     const verifiedValue = verifyInput(value);
     setCurrentPage(verifiedValue);
+    save(verifiedValue);
   };
 
-  const prev = (currentPage: number) => {
+  const prev = () => {
     if (currentPage <= 1) return;
     setCurrentPage(currentPage - 1);
-    setInputValue((Number(currentPage) - 1).toString());
+    setInputValue((currentPage - 1).toString());
+    save(currentPage - 1);
   };
 
-  const next = (currentPage: number, totalPage: number) => {
+  const next = () => {
     if (currentPage >= totalPage) return;
     setCurrentPage(currentPage + 1);
-    setInputValue((Number(currentPage) + 1).toString());
+    setInputValue((currentPage + 1).toString());
+    save(currentPage + 1);
   };
 
   const moveToFirst = () => {
     setCurrentPage(1);
     setInputValue('1');
+    save(1);
   };
 
   const moveToLast = () => {
     setCurrentPage(totalPage);
     setInputValue(totalPage.toString());
+    save(totalPage);
   };
+
+  // useEffect(() => {
+  //   savePage(currentPage);
+  // }, [onPageChange, prev, next, moveToFirst, moveToLast]);
 
   return (
     <div className={styles.page}>
       <button onClick={moveToFirst} disabled={currentPage === 1}>
         &lt;&lt;
       </button>
-      <button onClick={() => prev(currentPage)} disabled={currentPage === 1 || totalPage < 2}>
+      <button onClick={() => prev()} disabled={currentPage === 1 || totalPage < 2}>
         &lt;
       </button>
       <input type="text" value={inputValue} onChange={onPageChange} />
       &#47;
       <input type="text" value={totalPage} readOnly />
-      <button onClick={() => next(currentPage, totalPage)} disabled={currentPage === totalPage || totalPage < 2}>
+      <button onClick={() => next()} disabled={currentPage === totalPage || totalPage < 2}>
         &gt;
       </button>
       <button onClick={moveToLast} disabled={currentPage === totalPage}>

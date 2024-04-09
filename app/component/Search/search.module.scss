@@ -1,0 +1,35 @@
+.search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px 0;
+  > label {
+    display: flex;
+    align-items: center;
+    > button {
+      padding: 2px;
+    }
+  }
+  input[type='text'] {
+    border-bottom: 1px solid #d1d5db;
+    padding: 4px 7px;
+    width: 160px;
+    margin: 0 5px;
+    &::placeholder {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+    &:focus {
+      outline: none;
+      // animation: wide 1s forwards;
+    }
+  }
+}
+@keyframes wide {
+  from {
+    width: 80px;
+  }
+  to {
+    width: 200px;
+  }
+}

@@ -2,19 +2,37 @@ import { useQuery } from '@tanstack/react-query';
 import PostPreview from '../PostPreview';
 import styles from './list.module.scss';
 import { getPost } from '~/service';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Posts } from '~/type';
 import { Link } from '@remix-run/react';
 import Pagiantion from '../Pagination';
+import Search from '../Search';
+import { usePageMarkerState } from '~/store/pageMarker';
 
 const PostList = () => {
+  const { page } = usePageMarkerState();
   const [currentPage, setCurrentPage] = useState(1);
   const [inputPageValue, setInputPageValue] = useState(currentPage.toString());
+  const [searchString, setSearchString] = useState<undefined | string[]>(undefined);
 
   const { data } = useQuery({
-    queryKey: ['posts', currentPage],
-    queryFn: () => getPost({ page: currentPage }),
+    queryKey: ['posts', currentPage, searchString],
+    queryFn: () => getPost({ page: currentPage, keyword: searchString }),
   });
+
+  useEffect(() => {
+    if (page > 1) {
+      setCurrentPage(page);
+      setInputPageValue(page.toString());
+    }
+  }, [page]);
+
+  useEffect(() => {
+    if (searchString) {
+      setCurrentPage(1);
+      setInputPageValue('1');
+    }
+  }, [searchString]);
 
   return (
     <div>
@@ -34,6 +52,7 @@ const PostList = () => {
           setInputValue={setInputPageValue}
         />
       )}
+      <Search searchString={searchString} setSearchString={setSearchString} />
     </div>
   );
 };

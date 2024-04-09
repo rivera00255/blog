@@ -27,27 +27,53 @@ const addPost = async (post: Posts) => {
   }
 };
 
-const getPost = async ({ page }: { page?: number }) => {
+const getPost = async ({ page, keyword }: { page?: number; keyword?: string[] }) => {
   if (!page) page = 1;
   const perPage = 2;
   let list: Partial<Posts>[] = [];
   const postRef = collection(db, 'post');
   const q = query(postRef, orderBy('createdAt', 'desc'));
   const querySnapshot = await getDocs(q);
-  const totalElements = querySnapshot.size;
+  if (!keyword) {
+    querySnapshot.forEach((doc) => {
+      list.push({ ...doc.data(), id: doc.id });
+    });
+  } else {
+    querySnapshot.forEach((doc) => {
+      keyword.some((word) => doc.data().title.includes(word)) && list.push({ ...doc.data(), id: doc.id });
+    });
+  }
+  const totalElements = list.length;
   const totalPages = Math.ceil(totalElements / perPage);
-  querySnapshot.forEach((doc) => {
-    list.push({ ...doc.data(), id: doc.id });
-  });
   if (page <= 1) {
     if (totalElements <= perPage) list;
     list = list.slice(0, page * perPage);
   } else {
     list = list.slice((page - 1) * perPage, page * perPage);
   }
-
   return { posts: list, totalElements, totalPages };
 };
+
+// const getPosts = async ({ page }: { page?: number }) => {
+//   if (!page) page = 1;
+//   const perPage = 10;
+//   let list: Partial<Posts>[] = [];
+//   const postRef = collection(db, 'post');
+//   const q = query(postRef, orderBy('createdAt', 'desc'));
+//   const querySnapshot = await getDocs(q);
+//   const totalElements = querySnapshot.size;
+//   const totalPages = Math.ceil(totalElements / perPage);
+//   querySnapshot.forEach((doc) => {
+//     list.push({ ...doc.data(), id: doc.id });
+//   });
+//   if (page <= 1) {
+//     if (totalElements <= perPage) list;
+//     list = list.slice(0, page * perPage);
+//   } else {
+//     list = list.slice((page - 1) * perPage, page * perPage);
+//   }
+//   return { posts: list, totalElements, totalPages };
+// };
 
 const getPostById = async (id: string) => {
   // let post: Partial<Posts> = {};
