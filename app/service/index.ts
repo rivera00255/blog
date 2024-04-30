@@ -16,7 +16,7 @@ import {
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { fileInfo } from 'suneditor/src/lib/core';
 import { db, storage } from '~/lib/firebase';
-import { Posts } from '~/type';
+import { Comments, Posts } from '~/type';
 
 const addPost = async (post: Posts) => {
   try {
@@ -155,4 +155,74 @@ const deleteImage = async ({ image, userId }: { image: fileInfo; userId: string 
   }
 };
 
-export { addPost, getPost, getPostById, updatePost, deletePost, saveImage, deleteImage };
+const addComment = async (comment: Comments) => {
+  try {
+    const docRef = await addDoc(collection(db, 'comment'), comment);
+    console.log('Document written with ID: ', docRef.id);
+  } catch (e) {
+    console.error('Error adding document: ', e);
+  }
+};
+
+const getComment = async ({ postId, page }: { postId: string; page?: number }) => {
+  if (!page) page = 1;
+  const perPage = 2;
+  let list: Partial<Comments>[] = [];
+  const commentRef = collection(db, 'comment');
+  const q = query(commentRef, where('postId', '==', postId));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    list.push({ ...doc.data(), id: doc.id });
+  });
+  const totalElements = list.length;
+  const totalPages = Math.ceil(totalElements / perPage);
+  if (page <= 1) {
+    if (totalElements <= perPage) list;
+    list = list.slice(0, page * perPage);
+  } else {
+    list = list.slice((page - 1) * perPage, page * perPage);
+  }
+  return { comments: list, totalElements, totalPages };
+};
+
+const updateComment = async ({ id, userId, text }: { id: string; userId: string; text: string }) => {
+  const commentRef = doc(db, 'comment', id);
+  const docSnapshot = await getDoc(commentRef);
+  if (docSnapshot.exists()) {
+    const prev = { ...docSnapshot.data(), id } as Comments;
+    const date = new Date();
+    if (prev.user.uid !== userId) return;
+    await updateDoc(commentRef, {
+      text,
+      updatedAt: date,
+    });
+  } else {
+    console.log('No such comment!');
+  }
+  return;
+};
+
+const deleteComment = async ({ id, userId }: { id: string; userId: string }) => {
+  const commentRef = doc(db, 'comment', id);
+  const docSnapshot = await getDoc(commentRef);
+  if (docSnapshot.exists()) {
+    const post = { ...docSnapshot.data(), id } as Posts;
+    if (post.user.uid !== userId) return;
+    await deleteDoc(commentRef);
+  }
+  return;
+};
+
+export {
+  addPost,
+  getPost,
+  getPostById,
+  updatePost,
+  deletePost,
+  saveImage,
+  deleteImage,
+  addComment,
+  getComment,
+  updateComment,
+  deleteComment,
+};

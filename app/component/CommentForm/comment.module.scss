@@ -1,0 +1,19 @@
+.form {
+  display: flex;
+  align-items: center;
+  textarea {
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+    resize: none;
+    flex: 2;
+    margin: 0 4px 0 8px;
+    padding: 5px;
+  }
+  button {
+    background: #cbd5e1;
+    padding: 16px;
+    border-radius: 5px;
+    margin: 0 8px 0 4px;
+    color: #444;
+  }
+}

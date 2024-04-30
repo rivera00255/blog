@@ -9,3 +9,15 @@ export type Posts = {
     email: string;
   };
 };
+
+export type Comments = {
+  id?: string;
+  text: string;
+  postId: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  user: {
+    uid: string;
+    email: string;
+  };
+};
