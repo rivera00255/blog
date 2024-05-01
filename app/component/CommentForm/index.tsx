@@ -1,4 +1,4 @@
-import { SyntheticEvent, useRef } from 'react';
+import { SyntheticEvent, useRef, useState } from 'react';
 import styles from './comment.module.scss';
 import { useOutletContext } from '@remix-run/react';
 import { User } from 'firebase/auth';
@@ -9,6 +9,7 @@ const CommentForm = ({ postId }: { postId: string }) => {
   const user = useOutletContext<User | null>();
   const userInfo = { uid: String(user?.uid), email: String(user?.email) };
 
+  const [comment, setComment] = useState('');
   const commentRef = useRef<HTMLTextAreaElement>(null);
 
   const date = new Date();
@@ -19,20 +20,21 @@ const CommentForm = ({ postId }: { postId: string }) => {
     mutationFn: addComment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comment', postId] });
+      setComment('');
     },
   });
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    if (commentRef.current && commentRef.current.value.length > 0) {
-      const text = commentRef.current.value;
+    if (comment.trim().length > 0) {
+      const text = comment.trim();
       write({ text, user: userInfo, createdAt: date, postId });
     }
   };
 
   return (
     <form className={styles.form} onSubmit={onSubmit}>
-      <textarea ref={commentRef} />
+      <textarea value={comment} onChange={(e) => setComment(e.target.value)} />
       <button>
         <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path

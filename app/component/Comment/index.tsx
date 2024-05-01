@@ -6,6 +6,12 @@ import { User } from 'firebase/auth';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteComment, updateComment } from '~/service';
 
+const maskingEmail = (email: string) => {
+  const id = `${email.split('@')[0].slice(0, 2)}***${email.split('@')[0].slice(-1)}`;
+  const mail = email.split('@')[1];
+  return `${id}@${mail}`;
+};
+
 const Comment = ({ comment }: { comment: Comments }) => {
   const user = useOutletContext<User | null>();
 
@@ -35,14 +41,14 @@ const Comment = ({ comment }: { comment: Comments }) => {
 
   useEffect(() => {
     if (cloneRef.current) {
-      const elemHeight = Math.max(48, cloneRef.current.offsetHeight);
+      const elemHeight = Math.max(48, Number(cloneRef.current.offsetHeight) + 10);
       setHeight(elemHeight);
     }
   }, []);
 
   return (
     <div className={styles.container}>
-      {/* <p>{comment.user.email}</p> */}
+      <p>{maskingEmail(comment.user.email)}</p>
       <div ref={cloneRef} className={styles.clone}>
         {comment.text}
       </div>

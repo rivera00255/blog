@@ -166,7 +166,7 @@ const addComment = async (comment: Comments) => {
 
 const getComment = async ({ postId, page }: { postId: string; page?: number }) => {
   if (!page) page = 1;
-  const perPage = 2;
+  const perPage = 5;
   let list: Partial<Comments>[] = [];
   const commentRef = collection(db, 'comment');
   const q = query(commentRef, where('postId', '==', postId));

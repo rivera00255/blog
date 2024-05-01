@@ -1,6 +1,5 @@
 import { ChangeEvent, Dispatch, SetStateAction, useEffect } from 'react';
 import styles from './page.module.scss';
-import { getSessionStorage, setSessionStorage } from '~/utilities/persist';
 import { usePageMarkerState } from '~/store/pageMarker';
 
 const Pagiantion = ({
@@ -25,12 +24,6 @@ const Pagiantion = ({
     }
     return currentPage;
   };
-
-  // console.log(performance.getEntriesByType('navigation')[0]);
-
-  // const savePage = (currentPage: number) => {
-  //   setSessionStorage('page', currentPage);
-  // };
 
   const { save } = usePageMarkerState();
 
@@ -68,10 +61,6 @@ const Pagiantion = ({
     setInputValue(totalPage.toString());
     save(totalPage);
   };
-
-  // useEffect(() => {
-  //   savePage(currentPage);
-  // }, [onPageChange, prev, next, moveToFirst, moveToLast]);
 
   return (
     <div className={styles.page}>

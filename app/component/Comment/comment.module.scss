@@ -4,6 +4,11 @@
   font-size: 15px;
   color: #737373;
   position: relative;
+  > p {
+    font-size: 13px;
+    font-weight: 200;
+    color: #a3a3a3;
+  }
   textarea {
     width: 100%;
     resize: none;
@@ -23,6 +28,8 @@
   position: absolute;
   top: 24px;
   left: 16px;
+  font-size: 15px;
+  font-weight: 300;
   opacity: 0;
   z-index: -1;
   visibility: hidden;
