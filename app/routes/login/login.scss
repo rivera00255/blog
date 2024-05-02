@@ -58,7 +58,7 @@
       width: 90%;
     }
   }
-  > button {
+  > button:not(.forgot) {
     background: #cbd5e1;
     padding: 5px 32px;
     border-radius: 5px;
@@ -84,4 +84,10 @@
       color: #1e293b;
     }
   }
+}
+.forgot {
+  font-size: 13px;
+  font-weight: 200;
+  color: #1e293b;
+  margin: 20px 0 10px 0;
 }

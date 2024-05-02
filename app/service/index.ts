@@ -213,6 +213,28 @@ const deleteComment = async ({ id, userId }: { id: string; userId: string }) => 
   return;
 };
 
+const getCommentByuserId = async (userId: string) => {
+  let list: Partial<Comments>[] = [];
+  const commentRef = collection(db, 'comment');
+  const q = query(commentRef, where('user.uid', '==', userId));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    list.push({ ...doc.data(), id: doc.id });
+  });
+  return list;
+};
+
+const deleteAllByUser = async (userId: string) => {
+  const posts = await getPostByuserId(userId);
+  const comments = await getCommentByuserId(userId);
+  if (posts.length > 0) {
+    posts.forEach((doc) => deletePost({ id: String(doc.id), userId }));
+  }
+  if (comments.length > 0) {
+    comments.forEach((doc) => deleteComment({ id: String(doc.id), userId }));
+  }
+};
+
 export {
   addPost,
   getPost,

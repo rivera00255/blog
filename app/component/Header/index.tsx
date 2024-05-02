@@ -31,6 +31,11 @@ const Header = ({ user }: { user: User | null }) => {
               </Link>
             </li>
             <li>
+              <Link to="/mypage" state={{ uid: user.uid }} onClick={() => reset()}>
+                <button>mypage</button>
+              </Link>
+            </li>
+            <li>
               <button onClick={() => signOut(auth)}>logout</button>
             </li>
           </ul>
