@@ -35,7 +35,7 @@ const Post = () => {
       {data && <PostDetail item={data as Posts} />}
       <div className={styles.comment}>
         {comments?.comments.map((item) => <Comment comment={item as Comments} key={item.id} />)}
-        {comments && (
+        {comments && comments.totalElements > 0 && (
           <PagiantionButton
             currentPage={commentPage}
             setCurrentPage={setCommentPage}

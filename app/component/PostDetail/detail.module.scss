@@ -9,6 +9,16 @@
 .title {
   padding: 8px;
 }
+.intro {
+  text-align: right;
+  font-size: 12px;
+  padding: 0 8px;
+  margin-bottom: 10px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .content {
   padding: 20px;
 }

@@ -1,7 +1,7 @@
 import { Form, json, useActionData, useNavigate } from '@remix-run/react';
 import styles from './login.scss?url';
 import { useEffect, useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '~/lib/firebase';
 import { validateEmail, validatePassword } from '~/utilities';
 import { useNotifyStore } from '~/store/notify';
@@ -10,21 +10,28 @@ export const links = () => [{ rel: 'stylesheet', href: styles }];
 
 export const action = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
+  const mode = String(formData.get('mode'));
   const email = String(formData.get('email'));
   const password = String(formData.get('password'));
-  const errors = { email: false, password: false };
+  const nickname = String(formData.get('nickname'));
+  const passwordConfirm = String(formData.get('passwordConfirm'));
+  const errors = { email: false, password: false, nickname: false, passwordConfirm: false };
 
   if (!validateEmail(email)) errors.email = true;
   if (!validatePassword(password)) errors.password = true;
+  if (mode === 'join') {
+    if (nickname.length < 1) errors.nickname = true;
+    if (password !== passwordConfirm) errors.passwordConfirm = true;
+  }
   if (Object.values(errors).filter((error) => error === true).length > 0) {
     return json(errors);
   }
 
-  return json({ email, password });
+  return json({ email, password, nickname, passwordConfirm });
 };
 
 const Login = () => {
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState<'login' | 'join'>('login');
 
   const actionData = useActionData<typeof action>();
 
@@ -48,6 +55,9 @@ const Login = () => {
       if (mode === 'join') {
         createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
+            updateProfile(userCredential.user, {
+              displayName: actionData.nickname,
+            });
             navigate('/');
             return userCredential.user;
           })
@@ -72,6 +82,18 @@ const Login = () => {
           placeholder="이메일"
           className={actionData?.email === true ? 'error' : ''}
         />
+        {mode === 'join' && (
+          <>
+            <label htmlFor="email">nickname</label>
+            <input
+              type="text"
+              name="nickname"
+              id="nickname"
+              placeholder="닉네임"
+              className={actionData?.nickname === true ? 'error' : ''}
+            />
+          </>
+        )}
         <label htmlFor="password">password</label>
         <input
           type="password"
@@ -80,6 +102,18 @@ const Login = () => {
           placeholder="영어 소문자와 숫자 6자리 이상"
           className={actionData?.password === true ? 'error' : ''}
         />
+        {mode === 'join' && (
+          <>
+            <label htmlFor="passwordConfirm">confirm password</label>
+            <input
+              type="password"
+              name="passwordConfirm"
+              id="passwordConfirm"
+              placeholder="패스워드 확인"
+              className={actionData?.passwordConfirm === true ? 'error' : ''}
+            />
+          </>
+        )}
         <button type="submit">{mode}</button>
         <button type="button" className="forgot" onClick={() => navigate('/forgotpassword')}>
           forgot password?

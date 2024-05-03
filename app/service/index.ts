@@ -21,7 +21,8 @@ import { Comments, Posts } from '~/type';
 const addPost = async (post: Posts) => {
   try {
     const docRef = await addDoc(collection(db, 'post'), post);
-    console.log('Document written with ID: ', docRef.id);
+    // console.log('Document written with ID: ', docRef.id);
+    return docRef.id;
   } catch (e) {
     console.error('Error adding document: ', e);
   }
@@ -36,11 +37,12 @@ const getPost = async ({ page, keyword }: { page?: number; keyword?: string[] })
   const querySnapshot = await getDocs(q);
   if (!keyword) {
     querySnapshot.forEach((doc) => {
-      list.push({ ...doc.data(), id: doc.id });
+      list.push({ ...doc.data(), id: doc.id, createdAt: doc.data().createdAt.toDate() });
     });
   } else {
     querySnapshot.forEach((doc) => {
-      keyword.some((word) => doc.data().title.includes(word)) && list.push({ ...doc.data(), id: doc.id });
+      keyword.some((word) => doc.data().title.includes(word)) &&
+        list.push({ ...doc.data(), id: doc.id, createdAt: doc.data().createdAt.toDate() });
     });
   }
   const totalElements = list.length;
@@ -86,7 +88,7 @@ const getPostById = async (id: string) => {
   const postRef = doc(db, 'post', id);
   const docSnapshot = await getDoc(postRef);
   if (docSnapshot.exists()) {
-    return { ...docSnapshot.data(), id } as Posts;
+    return { ...docSnapshot.data(), id, createdAt: docSnapshot.data().createdAt.toDate() } as Posts;
   } else {
     console.log('No such document!');
     return;
@@ -123,6 +125,7 @@ const deletePost = async ({ id, userId }: { id: string; userId: string }) => {
     const post = { ...docSnapshot.data(), id } as Posts;
     if (post.user.uid !== userId) return;
     await deleteDoc(postRef);
+    deleteCommentByPost(id);
   }
   return;
 };
@@ -158,7 +161,8 @@ const deleteImage = async ({ image, userId }: { image: fileInfo; userId: string 
 const addComment = async (comment: Comments) => {
   try {
     const docRef = await addDoc(collection(db, 'comment'), comment);
-    console.log('Document written with ID: ', docRef.id);
+    // console.log('Document written with ID: ', docRef.id);
+    return docRef.id;
   } catch (e) {
     console.error('Error adding document: ', e);
   }
@@ -172,7 +176,7 @@ const getComment = async ({ postId, page }: { postId: string; page?: number }) =
   const q = query(commentRef, where('postId', '==', postId));
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    list.push({ ...doc.data(), id: doc.id });
+    list.push({ ...doc.data(), id: doc.id, createdAt: doc.data().createdAt.toDate() });
   });
   const totalElements = list.length;
   const totalPages = Math.ceil(totalElements / perPage);
@@ -213,6 +217,14 @@ const deleteComment = async ({ id, userId }: { id: string; userId: string }) => 
   return;
 };
 
+const deleteCommentByPost = async (postId: string) => {
+  const commentRef = collection(db, 'comment');
+  const q = query(commentRef, where('postId', '==', postId));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => deleteComment({ id: doc.id, userId: doc.data().user.uid }));
+  return;
+};
+
 const getCommentByuserId = async (userId: string) => {
   let list: Partial<Comments>[] = [];
   const commentRef = collection(db, 'comment');
@@ -224,15 +236,33 @@ const getCommentByuserId = async (userId: string) => {
   return list;
 };
 
-const deleteAllByUser = async (userId: string) => {
-  const posts = await getPostByuserId(userId);
-  const comments = await getCommentByuserId(userId);
-  if (posts.length > 0) {
-    posts.forEach((doc) => deletePost({ id: String(doc.id), userId }));
-  }
-  if (comments.length > 0) {
-    comments.forEach((doc) => deleteComment({ id: String(doc.id), userId }));
-  }
+// const deleteAllByUser = async (userId: string) => {
+//   const posts = await getPostByuserId(userId);
+//   const comments = await getCommentByuserId(userId);
+//   if (posts.length > 0) {
+//     posts.forEach((doc) => deletePost({ id: String(doc.id), userId }));
+//   }
+//   if (comments.length > 0) {
+//     comments.forEach((doc) => deleteComment({ id: String(doc.id), userId }));
+//   }
+// };
+
+const deleteAllPostByUser = async (userId: string) => {
+  const postRef = collection(db, 'post');
+  const q = query(postRef, where('user.uid', '==', userId));
+  const querySnapshot = await getDocs(q);
+  if (querySnapshot.size < 1) return;
+  querySnapshot.forEach((doc) => deletePost({ id: doc.id, userId }));
+  return;
+};
+
+const deleteAllCommentByUser = async (userId: string) => {
+  const postRef = collection(db, 'comment');
+  const q = query(postRef, where('user.uid', '==', userId));
+  const querySnapshot = await getDocs(q);
+  if (querySnapshot.size < 1) return;
+  querySnapshot.forEach((doc) => deleteComment({ id: doc.id, userId }));
+  return;
 };
 
 export {
@@ -247,4 +277,6 @@ export {
   getComment,
   updateComment,
   deleteComment,
+  deleteAllPostByUser,
+  deleteAllCommentByUser,
 };

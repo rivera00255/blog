@@ -7,7 +7,7 @@ import { addComment } from '~/service';
 
 const CommentForm = ({ postId }: { postId: string }) => {
   const user = useOutletContext<User | null>();
-  const userInfo = { uid: String(user?.uid), email: String(user?.email) };
+  const userInfo = { uid: String(user?.uid), email: String(user?.email), nickname: String(user?.displayName) };
 
   const [comment, setComment] = useState('');
   const commentRef = useRef<HTMLTextAreaElement>(null);

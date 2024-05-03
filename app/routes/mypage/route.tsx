@@ -4,6 +4,8 @@ import { Navigate, useLocation, useNavigate, useOutletContext } from '@remix-run
 import { EmailAuthProvider, User, deleteUser, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 import { useNotifyStore } from '~/store/notify';
 import { validatePassword } from '~/utilities';
+import { deleteAllCommentByUser, deleteAllPostByUser } from '~/service';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const reauthenticate = async (user: User, password: string) => {
   const credential = EmailAuthProvider.credential(String(user.email), password);
@@ -25,6 +27,24 @@ const MyPage = () => {
   const navigate = useNavigate();
 
   const { show } = useNotifyStore();
+
+  const queryClient = useQueryClient();
+
+  const { mutate: deletePosts } = useMutation({
+    mutationFn: deleteAllPostByUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      show({ message: 'delete all my post.' });
+    },
+  });
+
+  const { mutate: deleteComments } = useMutation({
+    mutationFn: deleteAllCommentByUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comment'] });
+      show({ message: 'delete all my comment.' });
+    },
+  });
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -83,6 +103,18 @@ const MyPage = () => {
     <div className={styles.container}>
       {mode === 'default' && (
         <div className={styles.buttons}>
+          <button
+            onClick={() => {
+              user && confirm('are you sure you want to delete it?') && deletePosts(user.uid);
+            }}>
+            delete all post
+          </button>
+          <button
+            onClick={() => {
+              user && confirm('are you sure you want to delete it?') && deleteComments(user.uid);
+            }}>
+            delete all comment
+          </button>
           <button onClick={() => setMode('update')}>update password</button>
           <button onClick={() => setMode('delete')}>delete account</button>
         </div>

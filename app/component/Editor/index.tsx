@@ -12,7 +12,7 @@ import { useNotifyStore } from '~/store/notify';
 
 const SunEditor = lazy(() => import('suneditor-react'));
 
-const Editor = ({ user, id }: { user: { uid: string; email: string }; id?: string }) => {
+const Editor = ({ user, id }: { user: { uid: string; email: string; nickname: string }; id?: string }) => {
   // const [value, setValue] = useState('');
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const editor = useRef<SunEditorCore>();

@@ -48,7 +48,19 @@ const Comment = ({ comment }: { comment: Comments }) => {
 
   return (
     <div className={styles.container}>
-      <p>{maskingEmail(comment.user.email)}</p>
+      <div className={styles.intro}>
+        <span>{comment.user.nickname}</span>
+        <span>
+          {comment.createdAt.toLocaleString('ko-KR', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          })}
+        </span>
+      </div>
       <div ref={cloneRef} className={styles.clone}>
         {comment.text}
       </div>

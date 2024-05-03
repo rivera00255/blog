@@ -12,6 +12,19 @@ const PostDetail = ({ item }: { item: Posts }) => {
       <div className={styles.post}>
         <div className={styles.title}>{item.title}</div>
         <hr />
+        <div className={styles.intro}>
+          <span>{item.user.nickname}</span>
+          <span>
+            {item.createdAt.toLocaleString('ko-KR', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })}
+          </span>
+        </div>
         <div className={styles.content}>
           <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }} />
         </div>

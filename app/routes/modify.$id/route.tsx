@@ -5,7 +5,7 @@ import styles from './modify.module.scss';
 
 const Modify = () => {
   const user = useOutletContext<User | null>();
-  const userInfo = { uid: String(user?.uid), email: String(user?.email) };
+  const userInfo = { uid: String(user?.uid), email: String(user?.email), nickname: String(user?.displayName) };
   const params = useParams();
 
   return (
