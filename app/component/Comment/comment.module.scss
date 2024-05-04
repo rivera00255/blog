@@ -31,7 +31,15 @@
     }
     &:last-of-type {
       font-size: 12px;
+      flex: 2;
+      text-align: right;
     }
+  }
+  > button {
+    margin-left: 12px;
+  }
+  .light {
+    color: #0369a1;
   }
 }
 .clone {

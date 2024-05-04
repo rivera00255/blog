@@ -178,15 +178,41 @@ const getComment = async ({ postId, page }: { postId: string; page?: number }) =
   querySnapshot.forEach((doc) => {
     list.push({ ...doc.data(), id: doc.id, createdAt: doc.data().createdAt.toDate() });
   });
-  const totalElements = list.length;
+  list.sort((a, b) => {
+    const date1 = a.createdAt ? new Date(a.createdAt) : new Date();
+    const date2 = b.createdAt ? new Date(b.createdAt) : new Date();
+    return date1.getTime() - date2.getTime();
+    // return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  });
+  // const totalElements = list.length;
+
+  // const parent = list.filter((item) => !item.parent);
+  const reply = list.filter((item) => item.parent);
+  let commentList = list
+    .filter((item) => !item.parent)
+    .map((doc) => {
+      return {
+        ...doc,
+        reply: reply.filter((item) => item.parent === doc.id),
+      };
+    });
+  const totalElements = commentList.length;
+
+  // const totalPages = Math.ceil(totalElements / perPage);
+  // if (page <= 1) {
+  //   if (totalElements <= perPage) list;
+  //   list = list.slice(0, page * perPage);
+  // } else {
+  //   list = list.slice((page - 1) * perPage, page * perPage);
+  // }
   const totalPages = Math.ceil(totalElements / perPage);
   if (page <= 1) {
     if (totalElements <= perPage) list;
-    list = list.slice(0, page * perPage);
+    commentList = commentList.slice(0, page * perPage);
   } else {
-    list = list.slice((page - 1) * perPage, page * perPage);
+    commentList = commentList.slice((page - 1) * perPage, page * perPage);
   }
-  return { comments: list, totalElements, totalPages };
+  return { comments: commentList, totalElements, totalPages };
 };
 
 const updateComment = async ({ id, userId, text }: { id: string; userId: string; text: string }) => {

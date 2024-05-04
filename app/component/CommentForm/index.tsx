@@ -1,16 +1,23 @@
-import { SyntheticEvent, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, SyntheticEvent, useRef, useState } from 'react';
 import styles from './comment.module.scss';
 import { useOutletContext } from '@remix-run/react';
 import { User } from 'firebase/auth';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addComment } from '~/service';
 
-const CommentForm = ({ postId }: { postId: string }) => {
+const CommentForm = ({
+  postId,
+  parent,
+  setIsReply,
+}: {
+  postId: string;
+  parent?: string;
+  setIsReply?: Dispatch<SetStateAction<boolean>>;
+}) => {
   const user = useOutletContext<User | null>();
-  const userInfo = { uid: String(user?.uid), email: String(user?.email), nickname: String(user?.displayName) };
+  const userInfo = { uid: String(user?.uid), email: String(user?.email), username: String(user?.displayName) };
 
   const [comment, setComment] = useState('');
-  const commentRef = useRef<HTMLTextAreaElement>(null);
 
   const date = new Date();
 
@@ -21,6 +28,7 @@ const CommentForm = ({ postId }: { postId: string }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comment', postId] });
       setComment('');
+      parent && setIsReply && setIsReply(false);
     },
   });
 
@@ -28,7 +36,7 @@ const CommentForm = ({ postId }: { postId: string }) => {
     e.preventDefault();
     if (comment.trim().length > 0) {
       const text = comment.trim();
-      write({ text, user: userInfo, createdAt: date, postId });
+      write({ text, user: userInfo, createdAt: date, postId, ...(parent && { parent }) });
     }
   };
 

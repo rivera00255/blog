@@ -5,14 +5,9 @@ import { useOutletContext } from '@remix-run/react';
 import { User } from 'firebase/auth';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteComment, updateComment } from '~/service';
+import CommentForm from '../CommentForm';
 
-const maskingEmail = (email: string) => {
-  const id = `${email.split('@')[0].slice(0, 2)}***${email.split('@')[0].slice(-1)}`;
-  const mail = email.split('@')[1];
-  return `${id}@${mail}`;
-};
-
-const Comment = ({ comment }: { comment: Comments }) => {
+const Comment = ({ comment, writer, parent }: { comment: Comments; writer: string; parent?: string }) => {
   const user = useOutletContext<User | null>();
 
   const commentRef = useRef<HTMLTextAreaElement>(null);
@@ -20,6 +15,7 @@ const Comment = ({ comment }: { comment: Comments }) => {
   const [height, setHeight] = useState(48);
 
   const [isEdit, setIsEdit] = useState(false);
+  const [isReply, setIsReply] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -49,7 +45,23 @@ const Comment = ({ comment }: { comment: Comments }) => {
   return (
     <div className={styles.container}>
       <div className={styles.intro}>
-        <span>{comment.user.nickname}</span>
+        {parent && (
+          <span style={{ marginRight: '10px' }}>
+            <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g id="Arrow / Arrow_Sub_Down_Right">
+                <path
+                  id="Vector"
+                  d="M13 11L18 16M18 16L13 21M18 16H10.1969C9.07899 16 8.5192 16 8.0918 15.7822C7.71547 15.5905 7.40973 15.2839 7.21799 14.9076C7 14.4798 7 13.9201 7 12.8V3"
+                  stroke="#737373"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </g>
+            </svg>
+          </span>
+        )}
+        <span className={writer === comment.user.uid ? `${styles.light}` : ''}>{comment.user.username}</span>
         <span>
           {comment.createdAt.toLocaleString('ko-KR', {
             year: 'numeric',
@@ -57,9 +69,26 @@ const Comment = ({ comment }: { comment: Comments }) => {
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
+            second: '2-digit',
             hour12: false,
           })}
         </span>
+        {user && !parent && (
+          <button onClick={() => setIsReply(!isReply)}>
+            <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g id="Arrow / Arrow_Sub_Right_Down">
+                <path
+                  id="Vector"
+                  d="M11 13L16 18M16 18L21 13M16 18V10.1969C16 9.07899 16 8.5192 15.7822 8.0918C15.5905 7.71547 15.2839 7.40973 14.9076 7.21799C14.4798 7 13.9201 7 12.8 7H3"
+                  stroke="#737373"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </g>
+            </svg>
+          </button>
+        )}
       </div>
       <div ref={cloneRef} className={styles.clone}>
         {comment.text}
@@ -100,27 +129,20 @@ const Comment = ({ comment }: { comment: Comments }) => {
             </>
           ) : (
             <button onClick={() => setIsEdit(true)}>
-              <svg
-                width="14px"
-                height="14px"
-                viewBox="0 -0.5 21 21"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlnsXlink="http://www.w3.org/1999/xlink">
-                <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-                  <g id="Dribbble-Light-Preview" transform="translate(-379.000000, -800.000000)" fill="#9ca3af">
-                    <g id="icons" transform="translate(56.000000, 160.000000)">
-                      <path
-                        d="M327.2,654 L325.1,654 L325.1,646 L327.2,646 L327.2,644 L323,644 L323,656 L327.2,656 L327.2,654 Z M333.5,644 L333.5,646 L341.9,646 L341.9,654 L333.5,654 L333.5,656 L344,656 L344,644 L333.5,644 Z M331.4,658 L333.5,658 L333.5,660 L327.2,660 L327.2,658 L329.3,658 L329.3,642 L327.2,642 L327.2,640 L333.5,640 L333.5,642 L331.4,642 L331.4,658 Z"
-                        id="edit_text_bar-[#1372]"></path>
-                    </g>
-                  </g>
-                </g>
+              <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M11 21H12C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3H11M11 16L15 12M15 12L11 8M15 12H3"
+                  stroke="#9ca3af"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
           )}
         </div>
       )}
+      {isReply && <CommentForm postId={comment.postId} parent={comment.id} setIsReply={setIsReply} />}
     </div>
   );
 };

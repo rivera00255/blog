@@ -7,7 +7,7 @@ export type Posts = {
   user: {
     uid: string;
     email: string;
-    nickname: string;
+    username: string;
   };
 };
 
@@ -17,9 +17,11 @@ export type Comments = {
   postId: string;
   createdAt: Date;
   updatedAt?: Date;
+  parent?: string;
+  reply?: Comments[];
   user: {
     uid: string;
     email: string;
-    nickname: string;
+    username: string;
   };
 };

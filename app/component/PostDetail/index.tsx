@@ -13,7 +13,7 @@ const PostDetail = ({ item }: { item: Posts }) => {
         <div className={styles.title}>{item.title}</div>
         <hr />
         <div className={styles.intro}>
-          <span>{item.user.nickname}</span>
+          <span>{item.user.username}</span>
           <span>
             {item.createdAt.toLocaleString('ko-KR', {
               year: 'numeric',
@@ -21,6 +21,7 @@ const PostDetail = ({ item }: { item: Posts }) => {
               day: 'numeric',
               hour: '2-digit',
               minute: '2-digit',
+              second: '2-digit',
               hour12: false,
             })}
           </span>

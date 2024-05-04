@@ -72,7 +72,7 @@ const Pagiantion = ({
       </button>
       <input type="text" value={inputValue} onChange={onPageChange} />
       &#47;
-      <input type="text" value={totalPage} readOnly />
+      <input type="text" value={totalPage < 1 ? 1 : totalPage} readOnly />
       <button onClick={() => next()} disabled={currentPage === totalPage || totalPage < 2}>
         &gt;
       </button>

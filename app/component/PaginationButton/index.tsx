@@ -4,15 +4,19 @@ import styles from './page.module.scss';
 const PagiantionButton = ({
   currentPage,
   setCurrentPage,
+  currentPageBlock,
+  setCurrentPageBlock,
   totalPage,
   pageLimit,
 }: {
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
+  currentPageBlock: number;
+  setCurrentPageBlock: Dispatch<SetStateAction<number>>;
   totalPage: number;
   pageLimit: number;
 }) => {
-  const [currentPageBlock, setCurrentPageBlock] = useState(0);
+  // const [currentPageBlock, setCurrentPageBlock] = useState(0);
 
   const pageOffset = currentPageBlock * pageLimit;
 

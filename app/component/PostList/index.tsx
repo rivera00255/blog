@@ -43,7 +43,7 @@ const PostList = () => {
           </Link>
         ))}
       </div>
-      {data && (
+      {data && data.totalPages > 0 && (
         <Pagiantion
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}

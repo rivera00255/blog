@@ -13,21 +13,21 @@ export const action = async ({ request }: { request: Request }) => {
   const mode = String(formData.get('mode'));
   const email = String(formData.get('email'));
   const password = String(formData.get('password'));
-  const nickname = String(formData.get('nickname'));
+  const username = String(formData.get('username'));
   const passwordConfirm = String(formData.get('passwordConfirm'));
-  const errors = { email: false, password: false, nickname: false, passwordConfirm: false };
+  const errors = { email: false, password: false, username: false, passwordConfirm: false };
 
   if (!validateEmail(email)) errors.email = true;
   if (!validatePassword(password)) errors.password = true;
   if (mode === 'join') {
-    if (nickname.length < 1) errors.nickname = true;
+    if (username.length < 1) errors.username = true;
     if (password !== passwordConfirm) errors.passwordConfirm = true;
   }
   if (Object.values(errors).filter((error) => error === true).length > 0) {
     return json(errors);
   }
 
-  return json({ email, password, nickname, passwordConfirm });
+  return json({ email, password, username, passwordConfirm });
 };
 
 const Login = () => {
@@ -56,7 +56,7 @@ const Login = () => {
         createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
             updateProfile(userCredential.user, {
-              displayName: actionData.nickname,
+              displayName: actionData.username,
             });
             navigate('/');
             return userCredential.user;
@@ -84,13 +84,13 @@ const Login = () => {
         />
         {mode === 'join' && (
           <>
-            <label htmlFor="email">nickname</label>
+            <label htmlFor="email">username</label>
             <input
               type="text"
-              name="nickname"
-              id="nickname"
+              name="username"
+              id="username"
               placeholder="닉네임"
-              className={actionData?.nickname === true ? 'error' : ''}
+              className={actionData?.username === true ? 'error' : ''}
             />
           </>
         )}
