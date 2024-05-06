@@ -1,3 +1,4 @@
+import { revokeAccessToken } from 'firebase/auth';
 import {
   addDoc,
   collection,
@@ -182,13 +183,11 @@ const getComment = async ({ postId, page }: { postId: string; page?: number }) =
     const date1 = a.createdAt ? new Date(a.createdAt) : new Date();
     const date2 = b.createdAt ? new Date(b.createdAt) : new Date();
     return date1.getTime() - date2.getTime();
-    // return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   });
   // const totalElements = list.length;
 
-  // const parent = list.filter((item) => !item.parent);
   const reply = list.filter((item) => item.parent);
-  let commentList = list
+  const parentComment = list
     .filter((item) => !item.parent)
     .map((doc) => {
       return {
@@ -196,8 +195,32 @@ const getComment = async ({ postId, page }: { postId: string; page?: number }) =
         reply: reply.filter((item) => item.parent === doc.id),
       };
     });
-  const totalElements = commentList.length;
 
+  let commentList = [] as Comments[];
+  parentComment.map((cur) => {
+    const temp = {
+      id: cur.id,
+      text: cur.text,
+      postId: cur.postId,
+      createdAt: cur.createdAt,
+      updatedAt: cur.updatedAt,
+      parent: cur.parent,
+      user: {
+        uid: cur.user?.uid,
+        email: cur.user?.email,
+        username: cur.user?.username,
+      },
+    } as Comments;
+    if (cur.reply.length > 0) {
+      commentList.push({ ...temp });
+      cur.reply.map((item) => commentList.push(item as Comments));
+    } else {
+      commentList.push({ ...temp });
+    }
+    return;
+  });
+
+  const totalElements = commentList.length;
   // const totalPages = Math.ceil(totalElements / perPage);
   // if (page <= 1) {
   //   if (totalElements <= perPage) list;

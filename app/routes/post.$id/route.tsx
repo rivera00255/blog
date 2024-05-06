@@ -47,7 +47,7 @@ const Post = () => {
     <div className={styles.container}>
       {data && <PostDetail item={data as Posts} />}
       <div className={styles.comment}>
-        {comments?.comments.map((item) => (
+        {/* {comments?.comments.map((item) => (
           <Fragment key={item.id}>
             <Comment comment={item as Comments} writer={data?.user.uid ?? ''} />
             {item.reply &&
@@ -55,7 +55,7 @@ const Post = () => {
                 <Comment comment={rep as Comments} writer={data?.user.uid ?? ''} parent={item.id} key={rep.id} />
               ))}
           </Fragment>
-        ))}
+        ))} */}
         {/* {comment?.map((item) => (
           <Fragment key={item.id}>
             <Comment comment={item as Comments} writer={data?.user.uid ?? ''} />
@@ -67,9 +67,9 @@ const Post = () => {
             )}
           </Fragment>
         ))} */}
-        {/* {comments?.comments.map((item) => (
-          <Comment comment={item as Comments} writer={data?.user.uid ?? ''} key={item.id} />
-        ))} */}
+        {comments?.comments.map((item) => (
+          <Comment comment={item as Comments} writer={data?.user.uid ?? ''} key={item.id} parent={item.parent} />
+        ))}
         {comments && comments.totalElements > 0 && (
           <PagiantionButton
             currentPage={commentPage}
