@@ -4,6 +4,7 @@ export type Posts = {
   content: string;
   createdAt: Date;
   updatedAt?: Date;
+  like: Like;
   user: {
     uid: string;
     email: string;
@@ -24,4 +25,9 @@ export type Comments = {
     email: string;
     username: string;
   };
+};
+
+type Like = {
+  userId: string[];
+  count: number;
 };

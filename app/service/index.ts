@@ -1,4 +1,3 @@
-import { revokeAccessToken } from 'firebase/auth';
 import {
   addDoc,
   collection,
@@ -19,9 +18,9 @@ import { fileInfo } from 'suneditor/src/lib/core';
 import { db, storage } from '~/lib/firebase';
 import { Comments, Posts } from '~/type';
 
-const addPost = async (post: Posts) => {
+const addPost = async (post: Omit<Posts | 'id', 'like'>) => {
   try {
-    const docRef = await addDoc(collection(db, 'post'), post);
+    const docRef = await addDoc(collection(db, 'post'), { ...post, like: { userId: [], count: 0 } });
     // console.log('Document written with ID: ', docRef.id);
     return docRef.id;
   } catch (e) {
@@ -94,6 +93,44 @@ const getPostById = async (id: string) => {
     console.log('No such document!');
     return;
   }
+};
+
+const likePost = async ({ postId, userId }: { postId: string; userId: string }) => {
+  const postRef = doc(db, 'post', postId);
+  const docSnapshot = await getDoc(postRef);
+  if (docSnapshot.exists()) {
+    const prev = { ...docSnapshot.data(), id: postId } as Posts;
+    if (prev.user.uid !== userId) return;
+    if (prev.like.userId.includes(userId)) return;
+    await updateDoc(postRef, {
+      like: {
+        userId: [...prev.like.userId, userId],
+        count: prev.like.count + 1,
+      },
+    });
+  } else {
+    console.log('No such document!');
+  }
+  return;
+};
+
+const disLikePost = async ({ postId, userId }: { postId: string; userId: string }) => {
+  const postRef = doc(db, 'post', postId);
+  const docSnapshot = await getDoc(postRef);
+  if (docSnapshot.exists()) {
+    const prev = { ...docSnapshot.data(), id: postId } as Posts;
+    if (prev.user.uid !== userId) return;
+    if (!prev.like.userId.includes(userId)) return;
+    await updateDoc(postRef, {
+      like: {
+        userId: [...prev.like.userId.filter((item) => item !== userId)],
+        count: prev.like.count > 0 ? prev.like.count - 1 : prev.like.count,
+      },
+    });
+  } else {
+    console.log('No such document!');
+  }
+  return;
 };
 
 const updatePost = async ({
@@ -328,4 +365,6 @@ export {
   deleteComment,
   deleteAllPostByUser,
   deleteAllCommentByUser,
+  likePost,
+  disLikePost,
 };

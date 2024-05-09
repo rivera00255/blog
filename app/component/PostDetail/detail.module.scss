@@ -21,6 +21,12 @@
 }
 .content {
   padding: 20px;
+  min-height: 400px;
+}
+.like {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .buttonWrapper {
   display: flex;

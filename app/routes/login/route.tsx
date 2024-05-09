@@ -115,9 +115,11 @@ const Login = () => {
           </>
         )}
         <button type="submit">{mode}</button>
-        <button type="button" className="forgot" onClick={() => navigate('/forgotpassword')}>
-          forgot password?
-        </button>
+        {mode === 'login' && (
+          <button type="button" className="forgot" onClick={() => navigate('/forgotpassword')}>
+            forgot password?
+          </button>
+        )}
       </Form>
       <div className="join">
         <button onClick={() => setMode((prev) => (prev === 'login' ? 'join' : 'login'))}>

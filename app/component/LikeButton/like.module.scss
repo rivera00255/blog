@@ -1,0 +1,15 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #d1d5db;
+  padding: 5px 16px;
+  border-radius: 20px;
+  width: 80px;
+  > span {
+    font-size: 13px;
+  }
+  &:hover:not(:disabled) {
+    border: 1px solid #fecdd3;
+  }
+}

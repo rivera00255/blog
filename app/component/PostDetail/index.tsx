@@ -3,9 +3,11 @@ import DOMPurify from 'dompurify';
 import styles from './detail.module.scss';
 import { Link, useOutletContext } from 'react-router-dom';
 import { User } from '@firebase/auth';
+import LikeButton from '../LikeButton';
 
 const PostDetail = ({ item }: { item: Posts }) => {
   const user = useOutletContext<User | null>();
+  // console.log(item);
 
   return (
     <div className={styles.container}>
@@ -28,6 +30,9 @@ const PostDetail = ({ item }: { item: Posts }) => {
         </div>
         <div className={styles.content}>
           <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }} />
+        </div>
+        <div className={styles.like}>
+          <LikeButton item={item} user={user} />
         </div>
       </div>
       {user && (
