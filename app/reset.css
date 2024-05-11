@@ -210,3 +210,15 @@ video {
 [hidden] {
   display: none;
 }
+
+/* tiptap editor custom */
+.ProseMirror:focus {
+  outline: none;
+}
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

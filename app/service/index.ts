@@ -186,10 +186,22 @@ const saveImage = async ({ image, userId }: { image: { file: File; name: string 
   return url;
 };
 
+const deleteImagebyName = async ({ url, userId }: { url: string; userId: string }) => {
+  try {
+    const image = url.replace('%2F', '/').split('/');
+    if (image[0] !== userId) return;
+    const imgRef = ref(storage, `${url.replace('%2F', '/')}`);
+    await deleteObject(imgRef);
+    console.log('delete complete.');
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const deleteImage = async ({ image, userId }: { image: fileInfo; userId: string }) => {
   try {
-    const desertRef = ref(storage, `${userId}/${image.name}`);
-    await deleteObject(desertRef);
+    const imgRef = ref(storage, `${userId}/${image.name}`);
+    await deleteObject(imgRef);
     console.log('delete complete.');
   } catch (e) {
     console.log(e);
@@ -367,4 +379,5 @@ export {
   deleteAllCommentByUser,
   likePost,
   disLikePost,
+  deleteImagebyName,
 };

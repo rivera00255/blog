@@ -1,0 +1,20 @@
+.link {
+  font-size: 14px;
+  > input {
+    padding: 4px 5px;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    width: 200px;
+    color: #5f6368;
+  }
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    button {
+      background: #d1d5db;
+      padding: 2px 8px;
+    }
+  }
+}

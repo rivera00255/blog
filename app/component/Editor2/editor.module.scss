@@ -1,0 +1,46 @@
+.editorWrapper {
+  padding: 0 10px;
+  > textarea {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    padding: 5px;
+    resize: none;
+    height: 36px;
+    &:focus {
+      outline: none;
+    }
+    &::placeholder {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+.editor {
+  margin: 0 0 10px 0;
+}
+.buttonWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0 10px 0;
+  > button {
+    padding: 8px 24px;
+    border: 1px solid #9ca3af;
+    border-radius: 5px;
+    color: #6b7280;
+    > span {
+      display: flex;
+      align-items: center;
+      > p {
+        margin-left: 8px;
+      }
+    }
+    &:hover {
+      color: #444;
+      border: 1px solid #444;
+    }
+  }
+}

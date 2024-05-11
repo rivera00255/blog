@@ -1,0 +1,85 @@
+.buttons {
+  width: 100%;
+  position: relative;
+  button {
+    border-radius: 8px;
+    font-size: 1em;
+    background: #fff;
+    margin: 3px;
+    // padding: 0.2em 0.4em;
+    // > span {
+    //   padding: 0.2em 0.4em;
+    // }
+    > div {
+      // padding: 5px 10px;
+      padding: 0.3em 0.6em;
+    }
+    &:hover {
+      background: #f9f9f9;
+    }
+    &:disabled {
+      opacity: 0.4;
+    }
+    &:focus,
+    button:focus-visible {
+      outline: 2px auto -webkit-focus-ring-color;
+      background: #f9f9f9;
+    }
+  }
+  label {
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 1em;
+    background: #fff;
+    padding: 0.3em 0.6em;
+    margin: 3px;
+    &:hover {
+      background: #f9f9f9;
+    }
+  }
+  input[type='file'] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+  }
+}
+.row {
+}
+.options {
+  position: absolute;
+  top: 0;
+  right: 0;
+  visibility: hidden;
+  opacity: 0;
+}
+.show {
+  background: #fff;
+  border-radius: 5px;
+  position: absolute;
+  // top: 40px;
+  // right: -80px;
+  visibility: unset;
+  opacity: 1;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.color {
+  width: 210px;
+  height: 210px;
+  top: 40px;
+  right: -80px;
+}
+.link {
+  padding: 20px 16px;
+  border: 1px solid #ddd;
+  background: #fcfcfc;
+  top: 40px;
+  right: -100px;
+}
