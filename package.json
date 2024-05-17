@@ -37,6 +37,7 @@
     "remix-utils": "^7.5.0",
     "suneditor": "^2.45.1",
     "suneditor-react": "^3.6.1",
+    "tiptap-extension-resize-image": "^1.0.4",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

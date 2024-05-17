@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { addPost, deleteImagebyName, deletePost, getPostById, saveImage, updatePost } from '~/service';
 import { useNavigate } from '@remix-run/react';
 import { useNotifyStore } from '~/store/notify';
-import { useEditor } from '@tiptap/react';
+import { Editor as EditorType, useEditor } from '@tiptap/react';
 import TiptapEditor from '../TiptapEditor';
 import StarterKit from '@tiptap/starter-kit';
 import { Color } from '@tiptap/extension-color';
@@ -15,6 +15,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { common, createLowlight } from 'lowlight';
 import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
+import ImageResize from 'tiptap-extension-resize-image';
 
 const extensions = [
   Color,
@@ -31,6 +32,7 @@ const extensions = [
     placeholder: 'click here to start writing …',
   }),
   Link,
+  ImageResize,
 ];
 
 const Editor = ({ user, id }: { user: { uid: string; email: string; username: string }; id?: string }) => {
@@ -86,13 +88,19 @@ const Editor = ({ user, id }: { user: { uid: string; email: string; username: st
     }
   }, []);
 
+  const getEditorImageSrc = (editor: EditorType) => {
+    const { src } = editor.getAttributes('image');
+    return src;
+  };
+
   const deletePostImage = (userId: string) => {
-    const regex = /(?<=src=")(.*)(?=">)/g;
-    const images = editor?.getHTML().match(regex);
-    // const { src } = editor!.getAttributes('image');
+    if (!editor) return;
+    const regex = /(?<=src=")(.*)(?="\s)/g;
+    const images = editor.getHTML().match(regex);
+    // const { src } = editor.getAttributes('image');
     if (!images) return;
-    const nameRegex = /(?<=appspot.com\/o\/)(.*)(?=\?alt=)/g;
     images.forEach((url) => {
+      const nameRegex = /(?<=appspot.com\/o\/)(.*)(?=\?alt=)/g;
       const filename = String(url.match(nameRegex));
       deleteImagebyName({ url: filename, userId });
     });
