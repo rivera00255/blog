@@ -10,6 +10,7 @@ export type Posts = {
     email: string;
     username: string;
   };
+  public: boolean;
 };
 
 export type Comments = {

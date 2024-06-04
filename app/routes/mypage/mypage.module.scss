@@ -3,8 +3,13 @@
   max-width: 640px;
   margin: 0 auto;
   min-height: 60dvh;
-  text-align: center;
-  padding-top: 40px;
+  padding: 40px 0;
+}
+.topics {
+  > h4 {
+    color: #374151;
+    margin-bottom: 20px;
+  }
 }
 .buttons {
   width: 300px;
@@ -47,6 +52,35 @@
     &:hover {
       background: #e2e8f0;
       color: #1e293b;
+    }
+  }
+  .close {
+    background: none;
+    padding: 2px;
+    position: relative;
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 0;
+      border-top: 1px solid #1e293b;
+      transform-origin: 50% 1px;
+      left: 8px;
+      top: 9px;
+    }
+    &::before {
+      transform: rotate(-45deg);
+    }
+    &::after {
+      transform: rotate(45deg);
+    }
+    &:hover {
+      background: none;
+      &::before,
+      &::after {
+        border-top: 2px solid #1e293b;
+      }
     }
   }
 }

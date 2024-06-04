@@ -82,8 +82,8 @@ const Editor2 = ({ user, id }: { user: { uid: string; email: string; username: s
       const text = editor.current.getText().trim();
       const content = editor.current.getContents(true);
       if (title.length > 0 && (text.length > 0 || editor.current.getImagesInfo().length > 0)) {
-        mode === 'create' && create({ title, content, createdAt: date, user });
-        mode === 'update' && update({ userId: user.uid, post: { title, content, id: String(id) } });
+        mode === 'create' && create({ title, content, createdAt: date, user, public: true });
+        mode === 'update' && update({ userId: user.uid, post: { title, content, id: String(id), public: true } });
       } else {
         show({ message: '제목과 내용을 입력하세요.' });
       }

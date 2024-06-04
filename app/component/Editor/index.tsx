@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './editor.module.scss';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { addPost, deleteImagebyName, deletePost, getPostById, saveImage, updatePost } from '~/service';
@@ -39,6 +39,7 @@ const Editor = ({ user, id }: { user: { uid: string; email: string; username: st
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const date = new Date();
   const postId = String(id);
+  const [privatePost, setPrivatePost] = useState(false);
 
   const navigate = useNavigate();
 
@@ -112,8 +113,9 @@ const Editor = ({ user, id }: { user: { uid: string; email: string; username: st
       const text = editor.getText().trim();
       const content = editor.getHTML();
       if (title.length > 0 && (text.length > 0 || content.includes('img'))) {
-        mode === 'create' && create({ title, content, createdAt: date, user });
-        mode === 'update' && update({ userId: user.uid, post: { title, content, id: String(id) } });
+        mode === 'create' && create({ title, content, createdAt: date, user, public: !privatePost });
+        mode === 'update' &&
+          update({ userId: user.uid, post: { title, content, id: String(id), public: !privatePost } });
       } else {
         show({ message: '제목과 내용을 입력하세요.' });
       }
@@ -129,6 +131,16 @@ const Editor = ({ user, id }: { user: { uid: string; email: string; username: st
       <textarea ref={titleRef} defaultValue={data?.title || ''} onInput={handleResizeHeight} maxLength={140} />
       <div className={styles.editor}>
         <TiptapEditor editor={editor} user={user} />
+        <div className={styles.buttonWrapper}>
+          <input
+            type="checkbox"
+            id="private"
+            name="private"
+            checked={!data?.public || false}
+            onChange={(e) => setPrivatePost(e.target.checked)}
+          />
+          <label htmlFor="private">private</label>
+        </div>
         {!data ? (
           <div className={styles.buttonWrapper}>
             <button onClick={() => onSubmit('create')}>

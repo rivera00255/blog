@@ -6,6 +6,7 @@ import { useNotifyStore } from '~/store/notify';
 import { validatePassword } from '~/utilities';
 import { deleteAllCommentByUser, deleteAllPostByUser } from '~/service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import PostList from '~/component/PostList';
 
 const reauthenticate = async (user: User, password: string) => {
   const credential = EmailAuthProvider.credential(String(user.email), password);
@@ -101,6 +102,10 @@ const MyPage = () => {
   if (!state) return <Navigate to="/" replace={true} />;
   return (
     <div className={styles.container}>
+      <div className={styles.topics}>
+        <h4>private topics</h4>
+        <PostList access={false} />
+      </div>
       {mode === 'default' && (
         <div className={styles.buttons}>
           <button
@@ -126,6 +131,13 @@ const MyPage = () => {
           <label htmlFor="newPw">new password</label>
           <input name="newPw" id="newPw" type="password" value={inputValue.newPw || ''} onChange={onChange} />
           <button>update password</button>
+          <button
+            onClick={() => {
+              setMode('default');
+              setInputValue({});
+            }}
+            className={styles.close}
+          />
         </form>
       )}
       {mode === 'delete' && (
@@ -135,6 +147,13 @@ const MyPage = () => {
           <label htmlFor="password">password</label>
           <input name="password" id="password" type="password" value={inputValue.password || ''} onChange={onChange} />
           <button>delete account</button>
+          <button
+            onClick={() => {
+              setMode('default');
+              setInputValue({});
+            }}
+            className={styles.close}
+          />
         </form>
       )}
     </div>

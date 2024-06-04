@@ -1,4 +1,6 @@
 import {
+  DocumentData,
+  QuerySnapshot,
   addDoc,
   collection,
   deleteDoc,
@@ -28,7 +30,7 @@ const addPost = async (post: Omit<Posts | 'id', 'like'>) => {
   }
 };
 
-const getPost = async ({ page, keyword }: { page?: number; keyword?: string[] }) => {
+const getPost = async ({ access, page, keyword }: { access: boolean; page?: number; keyword?: string[] }) => {
   if (!page) page = 1;
   const perPage = 2;
   let list: Partial<Posts>[] = [];
@@ -37,11 +39,13 @@ const getPost = async ({ page, keyword }: { page?: number; keyword?: string[] })
   const querySnapshot = await getDocs(q);
   if (!keyword) {
     querySnapshot.forEach((doc) => {
-      list.push({ ...doc.data(), id: doc.id, createdAt: doc.data().createdAt.toDate() });
+      doc.data().public === access &&
+        list.push({ ...doc.data(), id: doc.id, createdAt: doc.data().createdAt.toDate() });
     });
   } else {
     querySnapshot.forEach((doc) => {
       keyword.some((word) => doc.data().title.includes(word)) &&
+        doc.data().public === access &&
         list.push({ ...doc.data(), id: doc.id, createdAt: doc.data().createdAt.toDate() });
     });
   }
@@ -137,7 +141,7 @@ const updatePost = async ({
   post,
   userId,
 }: {
-  post: { title: string; content: string; id: string };
+  post: { title: string; content: string; id: string; public: boolean };
   userId: string;
 }) => {
   const id = String(post.id);

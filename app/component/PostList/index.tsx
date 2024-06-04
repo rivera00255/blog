@@ -9,15 +9,15 @@ import Pagiantion from '../Pagination';
 import Search from '../Search';
 import { usePageMarkerState } from '~/store/pageMarker';
 
-const PostList = () => {
+const PostList = ({ access }: { access: boolean }) => {
   const { page } = usePageMarkerState();
   const [currentPage, setCurrentPage] = useState(1);
   const [inputPageValue, setInputPageValue] = useState(currentPage.toString());
   const [searchString, setSearchString] = useState<undefined | string[]>(undefined);
 
   const { data } = useQuery({
-    queryKey: ['posts', currentPage, searchString],
-    queryFn: () => getPost({ page: currentPage, keyword: searchString }),
+    queryKey: ['posts', currentPage, searchString, access],
+    queryFn: () => getPost({ access: access, page: currentPage, keyword: searchString }),
   });
 
   useEffect(() => {

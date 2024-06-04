@@ -11,7 +11,7 @@ export const loader = async () => {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ['posts'],
-    queryFn: () => getPost({ page: 1 }),
+    queryFn: () => getPost({ access: true, page: 1 }),
   });
 
   return json({ dehydratedState: dehydrate(queryClient) });
@@ -24,7 +24,7 @@ export default function Index() {
     <div className="container">
       <h4>latest topics</h4>
       <HydrationBoundary state={dehydratedState}>
-        <PostList />
+        <PostList access={true} />
       </HydrationBoundary>
     </div>
   );
