@@ -18,7 +18,7 @@ const MenuBar = ({
   const getImageFile = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
-      const url = await saveImage({ image: { file, name: file.name }, userId: user.uid });
+      const url = await saveImage({ image: { file, name: `${Date.now()}${file.name}` }, userId: user.uid });
       return url;
     }
     return 'No Image';

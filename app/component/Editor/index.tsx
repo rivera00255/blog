@@ -16,6 +16,7 @@ import { common, createLowlight } from 'lowlight';
 import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
 import ImageResize from 'tiptap-extension-resize-image';
+import { extractImageUrl } from '~/utilities';
 
 const extensions = [
   Color,
@@ -89,16 +90,9 @@ const Editor = ({ user, id }: { user: { uid: string; email: string; username: st
     }
   }, []);
 
-  const getEditorImageSrc = (editor: EditorType) => {
-    const { src } = editor.getAttributes('image');
-    return src;
-  };
-
   const deletePostImage = (userId: string) => {
     if (!editor) return;
-    const regex = /(?<=src=")(.*)(?="\s)/g;
-    const images = editor.getHTML().match(regex);
-    // const { src } = editor.getAttributes('image');
+    const images = extractImageUrl(editor.getHTML());
     if (!images) return;
     images.forEach((url) => {
       const nameRegex = /(?<=appspot.com\/o\/)(.*)(?=\?alt=)/g;
@@ -136,7 +130,7 @@ const Editor = ({ user, id }: { user: { uid: string; email: string; username: st
             type="checkbox"
             id="private"
             name="private"
-            checked={!data?.public || false}
+            defaultChecked={data ? !data.public : false}
             onChange={(e) => setPrivatePost(e.target.checked)}
           />
           <label htmlFor="private">private</label>

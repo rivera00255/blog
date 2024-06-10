@@ -32,7 +32,7 @@ const addPost = async (post: Omit<Posts | 'id', 'like'>) => {
 
 const getPost = async ({ access, page, keyword }: { access: boolean; page?: number; keyword?: string[] }) => {
   if (!page) page = 1;
-  const perPage = 2;
+  const perPage = 10;
   let list: Partial<Posts>[] = [];
   const postRef = collection(db, 'post');
   const q = query(postRef, orderBy('createdAt', 'desc'));

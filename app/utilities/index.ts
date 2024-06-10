@@ -10,4 +10,12 @@ const validatePassword = (value: string) => {
   return false;
 };
 
-export { validateEmail, validatePassword };
+const extractImageUrl = (htmlString: string) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString, 'text/html');
+  const imgTags = doc.querySelectorAll('img');
+  const images = Array.from(imgTags).map((img) => img.src);
+  return images;
+};
+
+export { validateEmail, validatePassword, extractImageUrl };
